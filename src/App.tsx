@@ -1,24 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useCallback, useState } from 'react';
+import Options from './components/options';
+import ProgressBar from './components/progressBar';
 
 function App() {
+  const [progress, setProgress] = useState(0)
+  const [intervalId, setIntervalId] = useState<any>()
+
+  const onClickStart = useCallback(
+    () => {
+      const interval = setInterval(() => {
+        setProgress(progress => progress + 1)
+        setIntervalId(interval)
+      }, 500)
+    },
+    [setProgress, setIntervalId],
+  )
+
+  const onClickStop = useCallback(() => {
+      clearInterval(intervalId)
+  }, [intervalId])
+
+  const onClickReset = useCallback(() => {
+    clearInterval(intervalId)
+    setProgress(0)
+  }, [intervalId, setProgress])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ProgressBar progress={progress} />
+      <Options onClickStart={onClickStart} onClickStop={onClickStop} onClickReset={onClickReset} />
     </div>
   );
 }
